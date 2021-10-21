@@ -42,6 +42,11 @@ namespace breakOut {
             manager.drawBrick(e.Graphics);
             player.drawPlayer(e.Graphics);
             ball.drawBall(e.Graphics);
+
+            Image test = Image.FromFile(Application.StartupPath + @"\images\test.png");
+            Image ball1 = Image.FromFile(Application.StartupPath + @"\images\ball.png");
+            e.Graphics.DrawImage(test, 500, 500);
+            e.Graphics.DrawImage(ball1, 500, 500);
         }
     }
 }

@@ -68,8 +68,8 @@ namespace breakOut {
             for (int i = 0; i < map.brickMap.GetLength(0); i++) {
                 for (int j = 0; j < map.brickMap.GetLength(1); j++) {
                     if (map.brickMap[i, j] != 0) {
-                        if (ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50
-                            && ball.posY >= 100 + ((i + 1) * 30) - 20 && ball.posY <= 100 + ((i + 1) * 30) + 20)
+                        if (ball.posX >= (30 + (60 * (j - 1))) - 16 && ball.posX <= (30 + (60 * (j - 1))) + 50
+                            && ball.posY >= 100 + ((i + 1) * 30) && ball.posY <= 100 + ((i + 1) * 30) + 20)
                             map.brickMap[i, j] = 0;
                     }
                 }
