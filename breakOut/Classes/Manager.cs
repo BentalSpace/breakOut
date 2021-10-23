@@ -32,7 +32,7 @@ namespace breakOut {
                 for (int j = 1; j < map.brickMap.GetLength(1); j++) {
                     if (map.brickMap[i, j] == 1)
                         g.DrawImage(red, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if(map.brickMap[i, j] == 2)
+                    else if (map.brickMap[i, j] == 2)
                         g.DrawImage(orange, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
                     else if (map.brickMap[i, j] == 3)
                         g.DrawImage(yellow, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
@@ -68,9 +68,50 @@ namespace breakOut {
             for (int i = 0; i < map.brickMap.GetLength(0); i++) {
                 for (int j = 0; j < map.brickMap.GetLength(1); j++) {
                     if (map.brickMap[i, j] != 0) {
-                        if (ball.posX >= (30 + (60 * (j - 1))) - 16 && ball.posX <= (30 + (60 * (j - 1))) + 50
-                            && ball.posY >= 100 + ((i + 1) * 30) && ball.posY <= 100 + ((i + 1) * 30) + 20)
-                            map.brickMap[i, j] = 0;
+                        //if ((ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50)
+                        //    && (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20)) { // 왼쪽 위
+                        //    map.brickMap[i, j] = 0;
+                        //    ball.moveX *= -1;
+                        //    ball.moveY *= -1;
+                        //}
+                        //else if (((ball.posX + 16) >= (30 + (60 * (j - 1))) && (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50) // 오른쪽 위
+                        //    && (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20))
+                        //    map.brickMap[i, j] = 0;
+                        //else if ((ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50) // 왼쪽 아래
+                        //    && ((ball.posY + 16) >= 100 + (30 * (i + 1)) && (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20))
+                        //    map.brickMap[i, j] = 0;
+                        //else if (((ball.posX + 16) >= (30 + (60 * (j - 1))) && (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50) // 오른쪽 아래
+                        //    && ((ball.posY + 16) >= 100 + (30 * (i + 1)) && (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20))
+                        //    map.brickMap[i, j] = 0;
+
+                        if(ball.posY >= 100 + (30 * (i + 1)) + 17 && ball.posY <= 100 + (30 * (i + 1)) + 20){ // 벽돌 아래 부분
+                            if(ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50
+                                || ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 50) {
+                                map.brickMap[i, j] = 0;
+                                ball.moveY *= -1;
+                            }
+                        }
+                        if(ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 3) { // 벽돌 위 부분
+                            if (ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50
+                                || ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 50) {
+                                map.brickMap[i, j] = 0;
+                                ball.moveY *= -1;
+                            }
+                        }
+                        if(ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 3) { // 벽돌 왼쪽 부분
+                            if(ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20
+                                || ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 20) {
+                                map.brickMap[i, j] = 0;
+                                ball.moveX *= -1;
+                            }
+                        }
+                        if(ball.posX >= (30 + (60 * (j - 1))) + 47 && ball.posX <= (30 + (60 * (j - 1))) + 50) { // 벽돌 오른쪽 부분
+                            if (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20
+                                || ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 20) {
+                                map.brickMap[i, j] = 0;
+                                ball.moveX *= -1;
+                            }
+                        }
                     }
                 }
             }
