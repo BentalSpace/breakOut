@@ -8,8 +8,15 @@ using System.Drawing;
 
 namespace breakOut {
     class Player {
-        int posX = 355;
-        const int posY = 790;
+        private int posX = 355;
+        private const int posY = 790;
+
+        public int PosX {
+            get { return posX; }
+        }
+        public int PosY {
+            get { return posY; }
+        }
         int speed = 4;
         public void playerMove(MouseEventArgs e) {
             posX = e.X - 50;

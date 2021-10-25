@@ -20,7 +20,7 @@ namespace breakOut {
             player = new Player();
             brick = new Brick();
             ball = new Ball();
-            manager = new Manager(player, ball, brick);
+            manager = new Manager(player, ball, brick, LblTest);
         }
         private void Form1_Load(object sender, EventArgs e) {
             gameTimer.Interval = 1000 / 60;
@@ -33,6 +33,7 @@ namespace breakOut {
         private void gameTimer_Tick(object sender, EventArgs e) {
             manager.ballMove();
             manager.ballBrickTouch();
+            manager.ballPlayerTouch();
 
             Invalidate();
         }

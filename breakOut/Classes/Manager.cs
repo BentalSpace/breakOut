@@ -12,12 +12,16 @@ namespace breakOut {
         Ball ball;
         Brick brick;
         Map map;
+        Label lblTest;
+
+        string s;
 
         Image red, orange, yellow, green, blue, indigo, purple;
-        public Manager(Player player, Ball ball, Brick brick) {
+        public Manager(Player player, Ball ball, Brick brick, Label lblTest) {
             this.player = player;
             this.ball = ball;
             this.brick = brick;
+            this.lblTest = lblTest;
             map = new Map();
         }
 
@@ -63,6 +67,8 @@ namespace breakOut {
                 ball.moveY *= -1;
             ball.posX += ball.moveX;
             ball.posY += ball.moveY;
+
+            //lblTest.Text = player.PosX.ToString() + ", " + ball.posX+16.ToString();
         }
         public void ballBrickTouch() {
             for (int i = 0; i < map.brickMap.GetLength(0); i++) {
@@ -91,21 +97,21 @@ namespace breakOut {
                                 ball.moveY *= -1;
                             }
                         }
-                        if(ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 3) { // 벽돌 위 부분
+                        else if(ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 3) { // 벽돌 위 부분
                             if (ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50
                                 || ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 50) {
                                 map.brickMap[i, j] = 0;
                                 ball.moveY *= -1;
                             }
                         }
-                        if(ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 3) { // 벽돌 왼쪽 부분
+                        else if(ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 3) { // 벽돌 왼쪽 부분
                             if(ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20
                                 || ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 20) {
                                 map.brickMap[i, j] = 0;
                                 ball.moveX *= -1;
                             }
                         }
-                        if(ball.posX >= (30 + (60 * (j - 1))) + 47 && ball.posX <= (30 + (60 * (j - 1))) + 50) { // 벽돌 오른쪽 부분
+                        else if(ball.posX >= (30 + (60 * (j - 1))) + 47 && ball.posX <= (30 + (60 * (j - 1))) + 50) { // 벽돌 오른쪽 부분
                             if (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20
                                 || ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 20) {
                                 map.brickMap[i, j] = 0;
@@ -115,6 +121,34 @@ namespace breakOut {
                     }
                 }
             }
+        }
+        public void ballPlayerTouch() {
+            if (ball.posY + 16 >= player.PosY && ball.posY <= player.PosY - 3) {
+                if(ball.posX >= player.PosX && ball.posX+16 <= player.PosX + 100) {
+                    float temp = ball.posX - player.PosX;
+
+                    if(temp <= 42) {
+                        if(temp/8 <= 1.5f)
+                            ball.moveX = -3.5f;
+                        else if(temp/8 >= 3.5f)
+                            ball.moveX = -1.5f;
+                        else 
+                            ball.moveX = (temp / 10) * -1;
+                        ball.moveY = (5 - (ball.moveX * -1)) * -1;
+                    }
+                    else {
+                        temp -= 42;
+                        if (temp/8 >= 3.5f)
+                            ball.moveX = 3.5f;
+                        else if (temp/8 <= 1.5f)
+                            ball.moveX = 1.5f;
+                        else
+                            ball.moveX = temp / 10;
+                        ball.moveY = (5 - ball.moveX) * -1;
+                    }
+                }
+            }
+            lblTest.Text = ball.moveX + ", " + ball.moveY;
         }
     }
 }
