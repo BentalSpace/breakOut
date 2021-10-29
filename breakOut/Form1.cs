@@ -19,13 +19,14 @@ namespace breakOut {
             InitializeComponent();
             player = new Player();
             brick = new Brick();
-            ball = new Ball();
+            ball = new Ball(player);
             manager = new Manager(player, ball, brick, LblTest);
         }
         private void Form1_Load(object sender, EventArgs e) {
             gameTimer.Interval = 1000 / 60;
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e) {
+            manager.startGame(e);
         }
         private void Form1_MouseMove(object sender, MouseEventArgs e) {
             player.playerMove(e);

@@ -17,9 +17,13 @@ namespace breakOut {
         public int PosY {
             get { return posY; }
         }
-        int speed = 4;
         public void playerMove(MouseEventArgs e) {
-            posX = e.X - 50;
+            if (e.X <= 22 + 50)
+                posX = 22;
+            else if (e.X >= 708 + 50)
+                posX = 708;
+            else
+                posX = e.X - 50;
         }
         public void drawPlayer(Graphics g) {
             Image player;

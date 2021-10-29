@@ -51,6 +51,12 @@ namespace breakOut {
                 }
             }
         }
+        public void startGame(KeyEventArgs e) {
+            if(e.KeyCode == Keys.Space && ball.startNow) {
+                ball.moveY = 1;
+                ball.startNow = false;
+            }
+        }
         private void imageFileSet() {
             red = Image.FromFile(Application.StartupPath + @"\images\red.png");
             orange = Image.FromFile(Application.StartupPath + @"\images\orange.png");
@@ -68,7 +74,7 @@ namespace breakOut {
             ball.posX += ball.moveX;
             ball.posY += ball.moveY;
 
-            //lblTest.Text = player.PosX.ToString() + ", " + ball.posX+16.ToString();
+            lblTest.Text = player.PosX.ToString() + ", " + (ball.posX+16).ToString();
         }
         public void ballBrickTouch() {
             for (int i = 0; i < map.brickMap.GetLength(0); i++) {
@@ -148,7 +154,7 @@ namespace breakOut {
                     }
                 }
             }
-            lblTest.Text = ball.moveX + ", " + ball.moveY;
+            //lblTest.Text = ball.moveX + ", " + ball.moveY;
         }
     }
 }
