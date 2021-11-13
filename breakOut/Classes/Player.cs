@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace breakOut {
     class Player {
-        private int posX = 355;
+        private int posX = 0;//355;
         private const int posY = 790;
 
         public int PosX {

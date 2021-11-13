@@ -18,8 +18,8 @@ namespace breakOut {
         public BreakOut() {
             InitializeComponent();
             player = new Player();
-            brick = new Brick();
             ball = new Ball(player);
+            brick = new Brick(ball);
             manager = new Manager(player, ball, brick, LblTest);
         }
         private void Form1_Load(object sender, EventArgs e) {
@@ -32,8 +32,10 @@ namespace breakOut {
             player.playerMove(e);
         }
         private void gameTimer_Tick(object sender, EventArgs e) {
-            manager.ballMove();
-            manager.ballBrickTouch();
+            ball.ballCalcMove();
+            brick.ballBrickCalc();
+            ball.ballRealMove();
+            //brick.ballBrickTouch();
             manager.ballPlayerTouch();
 
             Invalidate();
@@ -41,14 +43,9 @@ namespace breakOut {
 
         private void Form1_Paint(object sender, PaintEventArgs e) {
             manager.Drawbackground(e.Graphics);
-            manager.drawBrick(e.Graphics);
+            brick.drawBrick(e.Graphics);
             player.drawPlayer(e.Graphics);
             ball.drawBall(e.Graphics);
-
-            Image test = Image.FromFile(Application.StartupPath + @"\images\test.png");
-            Image ball1 = Image.FromFile(Application.StartupPath + @"\images\ball.png");
-            e.Graphics.DrawImage(test, 500, 500);
-            e.Graphics.DrawImage(ball1, 500, 500);
         }
     }
 }
