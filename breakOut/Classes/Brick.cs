@@ -142,28 +142,28 @@ namespace breakOut {
                                     return;
                                 // 경계에 맞나 확인
                                 if ((ball.calcPosY + 16) == 100 + (30 * (i + 1))
-                                    && (ball.calcPosX >= (30 + (60 * (j - 1))) || (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50)) { // 벽돌 위쪽
+                                    /*&& (ball.calcPosX >= (30 + (60 * (j - 1))) || (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50)*/) { // 벽돌 위쪽
                                     //위쪽에 부딪힌 판정
                                     ball.dir = "U";
                                     map.brickMap[i, j] = 0;
                                     ballBrickCalcStart = false;
                                 }
                                 else if (ball.calcPosY == 100 + (30 * (i + 1)) + 20
-                                    && (ball.calcPosX >= (30 + (60 * (j - 1))) || (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50)) { // 벽돌 아래쪽
+                                    /*&& (ball.calcPosX >= (30 + (60 * (j - 1))) || (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50)*/) { // 벽돌 아래쪽
                                     //아래쪽에 부딪힌 판정
                                     ball.dir = "D";
                                     map.brickMap[i, j] = 0;
                                     ballBrickCalcStart = false;
                                 }
                                 else if ((ball.calcPosX + 16) == (30 + (60 * (j - 1)))
-                                    && (ball.posY >= 100 + (30 * (i + 1)) || (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20)) { // 벽돌 왼쪽
+                                    /*&& (ball.posY >= 100 + (30 * (i + 1)) || (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20)*/) { // 벽돌 왼쪽
                                     //왼쪽에 부딪힌 판정    
                                     ball.dir = "L";
                                     map.brickMap[i, j] = 0;
                                     ballBrickCalcStart = false;
                                 }
                                 else if (ball.calcPosX == (30 + (60 * (j - 1))) + 50
-                                    && (ball.posY >= 100 + (30 * (i + 1)) || (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20)) { // 벽돌 오른쪽
+                                   /* && (ball.posY >= 100 + (30 * (i + 1)) || (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20)*/) { // 벽돌 오른쪽
                                     //오른쪽에 부딪힌 판정
                                     ball.dir = "R";
                                     map.brickMap[i, j] = 0;
