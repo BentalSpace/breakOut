@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace breakOut {
+﻿namespace breakOut {
     class Map {
         /*
          * 0 : 비어있는 곳
@@ -15,8 +9,10 @@ namespace breakOut {
          * 5 : 파
          * 6 : 남
          * 7 : 보
+         * 8~10 : 회색
          */
         public int[,] brickMap = new int[,] {
+            {0,10,10,10,10,10,10,10,10,10,10,10,10,10,0 },
             {0,1,1,1,1,1,1,1,1,1,1,1,1,1,0 },
             {0,2,2,2,2,2,2,2,2,2,2,2,2,2,0 },
             {0,3,3,3,3,3,3,3,3,3,3,3,3,3,0 },

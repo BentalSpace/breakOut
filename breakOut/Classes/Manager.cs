@@ -62,7 +62,6 @@ namespace breakOut {
                     }
                 }
             }
-            lblTest.Text = ball.moveX + ", " + ball.moveY;
         }
     }
 }

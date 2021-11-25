@@ -1,23 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace breakOut {
     class Brick {
         private bool ballBrickCalcStart = false;
+        int hitNum;
+        int hitDelay;
+        int startDelay;
+        int saveI, saveJ;
 
         Map map;
         Ball ball;
 
-        Image red, orange, yellow, green, blue, indigo, purple;
+        Image red, orange, yellow, green, blue, indigo, purple, gray, gray1, gray2, gray3;
 
         public Brick(Ball ball) {
             this.ball = ball;
             map = new Map();
+
+            hitNum = 0;
+            hitDelay = 2;
+            startDelay = 5;
         }
         public void drawBrick(Graphics g) {
             imageFileSet();
@@ -37,6 +40,31 @@ namespace breakOut {
                         g.DrawImage(indigo, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
                     else if (map.brickMap[i, j] == 7)
                         g.DrawImage(purple, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
+                    else if (map.brickMap[i, j] >= 8)
+                        g.DrawImage(gray, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
+                }
+            }
+            if(saveI != 0) {
+                if (startDelay >= hitDelay) {
+                    startDelay = 0;
+                    hitNum++;
+                    switch (hitNum) {
+                        case 1:
+                            g.DrawImage(gray1, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
+                            break;
+                        case 2:
+                            g.DrawImage(gray2, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
+                            break;
+                        case 3:
+                            g.DrawImage(gray3, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
+                            break;
+                    }
+                }
+                startDelay++;
+                if(hitNum >= 3) {
+                    saveI = saveJ = 0;
+                    startDelay = 5;
+                    hitNum = 0;
                 }
             }
         }
@@ -48,6 +76,10 @@ namespace breakOut {
             blue = Image.FromFile(Application.StartupPath + @"\images\blue.png");
             indigo = Image.FromFile(Application.StartupPath + @"\images\indigo.png");
             purple = Image.FromFile(Application.StartupPath + @"\images\purple.png");
+            gray = Image.FromFile(Application.StartupPath + @"\images\gray.png");
+            gray1 = Image.FromFile(Application.StartupPath + @"\images\gray1.png");
+            gray2 = Image.FromFile(Application.StartupPath + @"\images\gray2.png");
+            gray3 = Image.FromFile(Application.StartupPath + @"\images\gray3.png");
         }
 
         public void ballBrickTouch() {
@@ -127,47 +159,87 @@ namespace breakOut {
                             while (true) {
                                 // 한칸씩 땡기기
                                 if (ball.moveX >= 1) {
-                                    ball.calcPosX -= 1;
+                                    ball.calcPosX += (ball.moveX / 10) * -1;//-1;
                                 }
                                 else if (ball.moveX <= -1) {
-                                    ball.calcPosX += 1;
+                                    ball.calcPosX += (ball.moveX / 10) * -1;//1;
                                 }
                                 if (ball.moveY >= 1) {
-                                    ball.calcPosY -= 1;
+                                    ball.calcPosY += (ball.moveY / 10) * -1;//-1;
                                 }
                                 else if (ball.moveY <= -1) {
-                                    ball.calcPosY += 1;
+                                    ball.calcPosY += (ball.moveY / 10) * -1;//1;
                                 }
-                                if (!ballBrickCalcStart)
-                                    return;
+                                //if (!ballBrickCalcStart)
+                                //    return;
                                 // 경계에 맞나 확인
-                                if ((ball.calcPosY + 16) == 100 + (30 * (i + 1))
+                                if ((ball.calcPosY + 16) <= 100 + (30 * (i + 1)) && (ball.posY + 16) >= 100 + (30 * (i + 1)) - 1
                                     /*&& (ball.calcPosX >= (30 + (60 * (j - 1))) || (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50)*/) { // 벽돌 위쪽
                                     //위쪽에 부딪힌 판정
                                     ball.dir = "U";
-                                    map.brickMap[i, j] = 0;
+                                    if (map.brickMap[i, j] >= 8) {
+                                        map.brickMap[i, j]--;
+                                        saveI = i;
+                                        saveJ = j;
+                                    }
+                                    if (map.brickMap[i, j] < 8) {
+                                        map.brickMap[i, j] = 0;
+                                        saveI = 0;
+                                        saveJ = 0;
+                                    }
                                     ballBrickCalcStart = false;
+                                    return;
                                 }
-                                else if (ball.calcPosY == 100 + (30 * (i + 1)) + 20
+                                else if (ball.calcPosY >= 100 + (30 * (i + 1)) + 20 && ball.calcPosY <= 100 + (30 * (i + 1)) + 20 + 1
                                     /*&& (ball.calcPosX >= (30 + (60 * (j - 1))) || (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50)*/) { // 벽돌 아래쪽
                                     //아래쪽에 부딪힌 판정
                                     ball.dir = "D";
-                                    map.brickMap[i, j] = 0;
+                                    if (map.brickMap[i, j] >= 8) {
+                                        map.brickMap[i, j]--;
+                                        saveI = i;
+                                        saveJ = j;
+                                    }
+                                    if (map.brickMap[i, j] < 8) {
+                                        map.brickMap[i, j] = 0;
+                                        saveI = 0;
+                                        saveJ = 0;
+                                    }
                                     ballBrickCalcStart = false;
+                                    return;
                                 }
-                                else if ((ball.calcPosX + 16) == (30 + (60 * (j - 1)))
+                                else if ((ball.calcPosX + 16) <= (30 + (60 * (j - 1))) && (ball.calcPosX + 16) >= (30 + (60 * (j - 1))) - 1
                                     /*&& (ball.posY >= 100 + (30 * (i + 1)) || (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20)*/) { // 벽돌 왼쪽
                                     //왼쪽에 부딪힌 판정    
                                     ball.dir = "L";
-                                    map.brickMap[i, j] = 0;
+                                    if (map.brickMap[i, j] >= 8) {
+                                        map.brickMap[i, j]--;
+                                        saveI = i;
+                                        saveJ = j;
+                                    }
+                                    if (map.brickMap[i, j] < 8) {
+                                        map.brickMap[i, j] = 0;
+                                        saveI = 0;
+                                        saveJ = 0;
+                                    }
                                     ballBrickCalcStart = false;
+                                    return;
                                 }
-                                else if (ball.calcPosX == (30 + (60 * (j - 1))) + 50
+                                else if (ball.calcPosX >= (30 + (60 * (j - 1))) + 50 && ball.calcPosX <= (30 + (60 * (j - 1))) + 50 + 1
                                    /* && (ball.posY >= 100 + (30 * (i + 1)) || (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20)*/) { // 벽돌 오른쪽
                                     //오른쪽에 부딪힌 판정
                                     ball.dir = "R";
-                                    map.brickMap[i, j] = 0;
+                                    if (map.brickMap[i, j] >= 8) {
+                                        map.brickMap[i, j]--;
+                                        saveI = i;
+                                        saveJ = j;
+                                    }
+                                    if (map.brickMap[i, j] < 8) {
+                                        map.brickMap[i, j] = 0;
+                                        saveI = 0;
+                                        saveJ = 0;
+                                    }
                                     ballBrickCalcStart = false;
+                                    return;
                                 }
                             }
                         }
