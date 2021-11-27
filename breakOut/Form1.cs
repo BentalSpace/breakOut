@@ -37,6 +37,7 @@ namespace breakOut {
             ball.ballRealMove();
             //brick.ballBrickTouch();
             manager.ballPlayerTouch();
+            manager.itemPlayerTouch();
 
             Invalidate();
         }
@@ -46,6 +47,7 @@ namespace breakOut {
             brick.drawBrick(e.Graphics);
             player.drawPlayer(e.Graphics);
             ball.drawBall(e.Graphics);
+            brick.drawItem(e.Graphics);
         }
     }
 }

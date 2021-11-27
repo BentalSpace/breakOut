@@ -1,5 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Media;
+using WMPLib;
 
 namespace breakOut {
     class Brick {
@@ -8,19 +11,42 @@ namespace breakOut {
         int hitDelay;
         int startDelay;
         int saveI, saveJ;
+        /*
+         * 0 : 공 갯수 증가
+         * 1 : 플레이어 크기 증가
+         * 2 : 플레이어 크기 감소
+         */
+        public bool[] itemSpawn;
+        /*
+         * x, 0 : X축
+         * x, 1 : Y축
+         */
+        public float[,] itemPos;
+
+        Random random;
 
         Map map;
         Ball ball;
 
         Image red, orange, yellow, green, blue, indigo, purple, gray, gray1, gray2, gray3;
+        Image bigSize, smallSize, ballMany;
+
+        private WindowsMediaPlayer wmp;
 
         public Brick(Ball ball) {
             this.ball = ball;
             map = new Map();
+            random = new Random();
 
             hitNum = 0;
-            hitDelay = 2;
+            hitDelay = 2 ;
             startDelay = 5;
+            itemSpawn = new bool[3];
+            itemPos = new float[3, 2];
+
+            wmp = new WindowsMediaPlayer();
+            wmp.URL = Application.StartupPath + @"\sounds\hit.mp3";
+            wmp.controls.stop();
         }
         public void drawBrick(Graphics g) {
             imageFileSet();
@@ -187,7 +213,9 @@ namespace breakOut {
                                         saveI = 0;
                                         saveJ = 0;
                                     }
+                                    wmp.controls.play();
                                     ballBrickCalcStart = false;
+                                    itemDrop(i, j);
                                     return;
                                 }
                                 else if (ball.calcPosY >= 100 + (30 * (i + 1)) + 20 && ball.calcPosY <= 100 + (30 * (i + 1)) + 20 + 1
@@ -204,7 +232,9 @@ namespace breakOut {
                                         saveI = 0;
                                         saveJ = 0;
                                     }
+                                    wmp.controls.play();
                                     ballBrickCalcStart = false;
+                                    itemDrop(i, j);
                                     return;
                                 }
                                 else if ((ball.calcPosX + 16) <= (30 + (60 * (j - 1))) && (ball.calcPosX + 16) >= (30 + (60 * (j - 1))) - 1
@@ -221,7 +251,9 @@ namespace breakOut {
                                         saveI = 0;
                                         saveJ = 0;
                                     }
+                                    wmp.controls.play();
                                     ballBrickCalcStart = false;
+                                    itemDrop(i, j);
                                     return;
                                 }
                                 else if (ball.calcPosX >= (30 + (60 * (j - 1))) + 50 && ball.calcPosX <= (30 + (60 * (j - 1))) + 50 + 1
@@ -238,7 +270,9 @@ namespace breakOut {
                                         saveI = 0;
                                         saveJ = 0;
                                     }
+                                    wmp.controls.play();
                                     ballBrickCalcStart = false;
+                                    itemDrop(i, j);
                                     return;
                                 }
                             }
@@ -246,6 +280,40 @@ namespace breakOut {
                     }
                 }
             }
+        }
+        private void itemDrop(int i, int j) {
+            int tempRand = 4;//random.Next(99);
+            if(tempRand < 3) {
+                if (itemSpawn[0])
+                    return;
+                //아이템 드랍
+                itemSpawn[0] = true;
+                itemPos[0, 0] = 30 + (60 * (j - 1)) + 5;
+                itemPos[0, 1] = 100 + (30 * (i + 1));
+            }
+            else if(tempRand < 6) {
+                if (itemSpawn[1])
+                    return;
+                //아이템 드랍
+                itemSpawn[1] = true;
+                itemPos[1, 0] = 30 + (60 * (j - 1)) + 5;
+                itemPos[1, 1] = 100 + (30 * (i + 1))+1;
+            }
+            else if(tempRand < 9) {
+                if (itemSpawn[2])
+                    return;
+                //아이템 드랍
+                itemSpawn[2] = true;
+                itemPos[2, 0] = 30 + (60 * (j - 1)) + 5;
+                itemPos[2, 1] = 100 + (30 * (i + 1));
+            }
+            bigSize = Image.FromFile(Application.StartupPath + @"\images\bigSizeItem.png");
+        }
+        public void drawItem(Graphics g) {
+            if (!itemSpawn[0] && !itemSpawn[1] && !itemSpawn[2])
+                return;
+            g.DrawImage(bigSize, itemPos[1, 0], itemPos[1, 1]);
+            itemPos[1, 1] += 3;
         }
     }
 }
