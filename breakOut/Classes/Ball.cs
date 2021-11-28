@@ -3,54 +3,102 @@ using System.Windows.Forms;
 
 namespace breakOut {
     class Ball {
-        public float posX = 405;
-        public float posY = 790 - 17;
-        public float moveX = 0; //-1.5f;                    //   25 34 43 52 
-        public float moveY = 0; //3.5f;
-        public float calcPosX = 405;
-        public float calcPosY = 790 - 17;
+        public int ballCount = 1;
+        public int changeBallIndex;
+        public float[] posX;// = 405;
+        public float[] posY;// = 790 - 17;
+        public float[] moveX; //-1.5f;                    //   25 34 43 52 
+        public float[] moveY; //3.5f;
+        public float[] calcPosX; // = 405;
+        public float[] calcPosY; // = 790 - 17;
 
         public bool startNow = true;
         public string dir = null;
 
         Player player;
+        Label lblGameover;
 
-        public Ball(Player player) {
+        Image ball;
+        public Ball(Player player, Label lblGameover) {
             this.player = player;
+            this.lblGameover = lblGameover;
+
+            posX = new float[3];
+            posY = new float[3];
+            moveX = new float[3];
+            moveY = new float[3];
+            calcPosX = new float[3];
+            calcPosY = new float[3];
+
+            calcPosY[0] = 790 - 17;
+
+            ball = Image.FromFile(Application.StartupPath + @"\images\ball.png");
         }
 
         public void drawBall(Graphics g) {
-            Image ball;
-            ball = Image.FromFile(Application.StartupPath + @"\images\ball.png");
-
             if (startNow) {
-                calcPosX = player.PosX + 42;
-                g.DrawImage(ball, posX, posY);
+                calcPosX[0] = player.PosX + 42;
+
+                g.DrawImage(ball, posX[0], posY[0]);
             }
-            else
-                g.DrawImage(ball, posX, posY);
+            else {
+                // int ballNum = 0;
+                for (int ballNum = 0; ballNum < ballCount; ballNum++)
+                    //while (ballNum < ballCount)
+                    g.DrawImage(ball, posX[ballNum], posY[ballNum]);
+            }
+        }
+        public void ballDeath() {
+            for (int ballNum = 0; ballNum < ballCount; ballNum++) {
+                if (posY[ballNum] >= 1000) {
+                    //죽고, 숫자 땡겨
+                    //3번(마지막 번호)이 죽으면 상관 없는데 2번,1번이 죽으면 ballcount가 꼬이니까 한칸씩 땡겨줘야 한다.
+                    if (ballNum < ballCount - 1) {
+                        int temp = ballCount - 1 - ballNum;
+                        //0 1 2 -> 1이 죽었어 -> 2를 1로 보내줘야 해 -> ballnum+1 = ballnum -> temp = 2-1 = 1
+                        //0 1 2 -> 0이 죽었어 -> 1 2 를 0 1로 보내주거나, 2를 0으로 보내주거나 -> temp = 2-0 = 2
+                        // 0 1 -> 0이 죽었어 -> 1을 0으로 보내야 해 -> temp = 1 - 0 = 1
+                        posX[ballNum] = posX[ballNum + temp];
+                        posY[ballNum] = posY[ballNum + temp];
+                        moveX[ballNum] = moveX[ballNum + temp];
+                        moveY[ballNum] = moveY[ballNum + temp];
+                        calcPosX[ballNum] = calcPosX[ballNum + temp];
+                        calcPosY[ballNum] = calcPosY[ballNum + temp];
+                    }
+                    ballCount--;
+                }
+            }
+            if (ballCount <= 0) {
+                lblGameover.Visible = true;
+            }
         }
         public void ballCalcMove() {
-            if (posX <= 20 || posX >= 795) // 옆쪽 벽
-                moveX *= -1;
-            if (posY <= 70) // 위쪽 벽
-                moveY *= -1;
+            for (int ballNum = 0; ballNum < ballCount; ballNum++) {
+                if (posX[ballNum] <= 20 || posX[ballNum] >= 795) // 옆쪽 벽
+                    moveX[ballNum] *= -1;
+                if (posY[ballNum] <= 70) // 위쪽 벽
+                    moveY[ballNum] *= -1;
 
-            if (dir == "U" || dir == "D") {
-                moveY *= -1;
-                dir = null;
-            }
-            else if(dir == "L" || dir == "R") {
-                moveX *= -1;
-                dir = null;
-            }
+                if (dir == "UD") {
+                    moveY[changeBallIndex] *= -1;
+                    dir = null;
+                    changeBallIndex = 999;
+                }
+                else if (dir == "LR") {
+                    moveX[changeBallIndex] *= -1;
+                    dir = null;
+                    changeBallIndex = 999;
+                }
 
-            calcPosX += moveX;
-            calcPosY += moveY;
+                calcPosX[ballNum] += moveX[ballNum];
+                calcPosY[ballNum] += moveY[ballNum];
+            }
         }
         public void ballRealMove() { // 벽돌과의 계산 후 호출
-            posX = calcPosX;
-            posY = calcPosY;
+            for (int ballNum = 0; ballNum < ballCount; ballNum++) {
+                posX[ballNum] = calcPosX[ballNum];
+                posY[ballNum] = calcPosY[ballNum];
+            }
         }
     }
 }

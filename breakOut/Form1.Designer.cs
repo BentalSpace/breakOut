@@ -28,6 +28,7 @@ namespace breakOut {
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
             this.lblScore = new System.Windows.Forms.Label();
             this.LblTest = new System.Windows.Forms.Label();
+            this.lblGameover = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // gameTimer
@@ -59,12 +60,26 @@ namespace breakOut {
             this.LblTest.TabIndex = 1;
             this.LblTest.Text = "Label";
             // 
+            // lblGameover
+            // 
+            this.lblGameover.AutoSize = true;
+            this.lblGameover.BackColor = System.Drawing.Color.Black;
+            this.lblGameover.Font = new System.Drawing.Font("굴림", 40F);
+            this.lblGameover.ForeColor = System.Drawing.Color.White;
+            this.lblGameover.Location = new System.Drawing.Point(251, 399);
+            this.lblGameover.Name = "lblGameover";
+            this.lblGameover.Size = new System.Drawing.Size(282, 54);
+            this.lblGameover.TabIndex = 2;
+            this.lblGameover.Text = "Gameover";
+            this.lblGameover.Visible = false;
+            // 
             // BreakOut
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(829, 861);
+            this.Controls.Add(this.lblGameover);
             this.Controls.Add(this.LblTest);
             this.Controls.Add(this.lblScore);
             this.DoubleBuffered = true;
@@ -84,6 +99,7 @@ namespace breakOut {
         private System.Windows.Forms.Timer gameTimer;
         private System.Windows.Forms.Label lblScore;
         private System.Windows.Forms.Label LblTest;
+        private System.Windows.Forms.Label lblGameover;
     }
 }
 

@@ -18,7 +18,7 @@ namespace breakOut {
         public BreakOut() {
             InitializeComponent();
             player = new Player();
-            ball = new Ball(player);
+            ball = new Ball(player, lblGameover);
             brick = new Brick(ball);
             manager = new Manager(player, ball, brick, LblTest);
         }
@@ -35,9 +35,11 @@ namespace breakOut {
             ball.ballCalcMove();
             brick.ballBrickCalc();
             ball.ballRealMove();
+            ball.ballDeath();
             //brick.ballBrickTouch();
             manager.ballPlayerTouch();
             manager.itemPlayerTouch();
+            brick.itemDespawn();
 
             Invalidate();
         }

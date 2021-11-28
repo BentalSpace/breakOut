@@ -6,12 +6,12 @@ namespace breakOut {
         private int posX = 0;//355;
         private const int posY = 790;
 
-        public string playerSize = "S";
+        public string playerSize = "M"; // S, M, B
 
         public Image player;
 
         public Player() {
-            player = Image.FromFile(Application.StartupPath + @"\images\playerSmall.png");
+            player = Image.FromFile(Application.StartupPath + @"\images\playerNormal.png");
         }
         public int PosX {
             get { return posX; }
