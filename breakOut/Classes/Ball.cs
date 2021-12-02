@@ -16,7 +16,7 @@ namespace breakOut {
         public string dir = null;
 
         Player player;
-        Label lblGameover;
+        public Label lblGameover;
 
         Image ball;
         public Ball(Player player, Label lblGameover) {
@@ -30,7 +30,7 @@ namespace breakOut {
             calcPosX = new float[3];
             calcPosY = new float[3];
 
-            calcPosY[0] = 790 - 17;
+            calcPosY[0] = 600 - 17;
 
             ball = Image.FromFile(Application.StartupPath + @"\images\ball.png");
         }
@@ -74,9 +74,11 @@ namespace breakOut {
         }
         public void ballCalcMove() {
             for (int ballNum = 0; ballNum < ballCount; ballNum++) {
-                if (posX[ballNum] <= 20 || posX[ballNum] >= 795) // 옆쪽 벽
+                if (posX[ballNum] >= 795 && moveX[ballNum] > 0) // 옆쪽 벽
                     moveX[ballNum] *= -1;
-                if (posY[ballNum] <= 70) // 위쪽 벽
+                if(posX[ballNum] <= 20 && moveX[ballNum] < 0)
+                    moveX[ballNum] *= -1;
+            if (posY[ballNum] <= 70 && moveY[ballNum] < 0) // 위쪽 벽
                     moveY[ballNum] *= -1;
 
                 if (dir == "UD") {

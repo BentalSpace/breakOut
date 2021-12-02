@@ -3,20 +3,32 @@ using System.Windows.Forms;
 
 namespace breakOut {
     class Manager {
+        public int stageNum;
 
         Player player;
         Ball ball;
         Brick brick;
         Map map;
-        Label lblTest;
+        Label lblScore;
 
-        public Manager(Player player, Ball ball, Brick brick, Label lblTest) {
+        public Manager(Player player, Ball ball, Brick brick, Label lblScore) {
             this.player = player;
             this.ball = ball;
             this.brick = brick;
-            this.lblTest = lblTest;
+            this.lblScore = lblScore;
             map = new Map();
         }
+        public Manager() { }
+        //public void StageClear(int clearItem, int currentItem) {
+        //     if(2 <= currentItem) {
+        //        stageNum++;
+        //        // ball.startNow = true; //이게 왜 null인데
+        //        //brick.attackBrick = 0;
+        //    }
+        //     if(stageNum >= 4) {
+        //        //스테이지 클리어
+        //    }
+        //}
 
         public void Drawbackground(Graphics g) {
             Image background;
@@ -146,6 +158,9 @@ namespace breakOut {
             ball.calcPosX[2] = ball.posX[2];
             ball.calcPosY[2] = ball.posY[2];
         }
+        public void scoreUpdate() {
+            lblScore.Text = "SCORE : " + brick.score.ToString();
+        }
         public void itemPlayerTouch() {
             if (!brick.itemSpawn[0] && !brick.itemSpawn[1] && !brick.itemSpawn[2])
                 return;
@@ -154,16 +169,19 @@ namespace breakOut {
                     if (player.playerSize.Equals("M")) {
                         if (brick.itemPos[0, 0] + 35 >= player.PosX && brick.itemPos[0, 0] + 5 <= player.PosX + 100) {
                             ballItemCatch();
+                            brick.score += 60;
                         }
                     }
                     else if (player.playerSize.Equals("B")) {
                         if (brick.itemPos[0, 0] + 35 >= player.PosX && brick.itemPos[0, 0] + 5 <= player.PosX + 130) {
                             ballItemCatch();
+                            brick.score += 30;
                         }
                     }
                     else if (player.playerSize.Equals("S")) {
                         if (brick.itemPos[0, 0] + 35 >= player.PosX && brick.itemPos[0, 0] + 5 <= player.PosX + 60) {
                             ballItemCatch();
+                            brick.score += 90;
                         }
                     }
                 }
@@ -175,11 +193,13 @@ namespace breakOut {
                             brick.itemSpawn[1] = false;
                             player.player = Image.FromFile(Application.StartupPath + @"\images\playerBig.png");
                             player.playerSize = "B";
+                            brick.score += 60;
                         }
                     }
                     else if (player.playerSize.Equals("B")) {
                         if (brick.itemPos[1, 0] + 35 >= player.PosX && brick.itemPos[1, 0] + 5 <= player.PosX + 130) {
                             brick.itemSpawn[1] = false;
+                            brick.score += 30;
                         }
                     }
                     else if (player.playerSize.Equals("S")) {
@@ -187,6 +207,7 @@ namespace breakOut {
                             brick.itemSpawn[1] = false;
                             player.player = Image.FromFile(Application.StartupPath + @"\images\playerNormal.png");
                             player.playerSize = "M";
+                            brick.score += 90;
                         }
                     }
                 }
@@ -198,6 +219,7 @@ namespace breakOut {
                             brick.itemSpawn[2] = false;
                             player.player = Image.FromFile(Application.StartupPath + @"\images\playerSmall.png");
                             player.playerSize = "S";
+                            brick.score += 60;
                         }
                     }
                     else if (player.playerSize.Equals("B")) {
@@ -205,11 +227,13 @@ namespace breakOut {
                             brick.itemSpawn[2] = false;
                             player.player = Image.FromFile(Application.StartupPath + @"\images\playerNormal.png");
                             player.playerSize = "M";
+                            brick.score += 30;
                         }
                     }
                     else if (player.playerSize.Equals("S")) {
                         if (brick.itemPos[2, 0] + 35 >= player.PosX && brick.itemPos[2, 0] + 5 <= player.PosX + 60) {
                             brick.itemSpawn[2] = false;
+                            brick.score += 90;
                         }
                     }
                 }

@@ -10,12 +10,16 @@ namespace breakOut {
         int hitDelay;
         int startDelay;
         int saveI, saveJ;
+        int stageNum;
+        public int score;
+        public int attackBrick;
         /*
          * 0 : 공 갯수 증가
          * 1 : 플레이어 크기 증가
          * 2 : 플레이어 크기 감소
          */
         public bool[] itemSpawn;
+        public bool gameSet = false;
         /*
          * x, 0 : X축
          * x, 1 : Y축
@@ -24,8 +28,9 @@ namespace breakOut {
 
         Random random;
 
-        Map map;
+        public Map map;
         Ball ball;
+        Manager manager;
 
         Image red, orange, yellow, green, blue, indigo, purple, gray, gray1, gray2, gray3;
         Image bigSize, smallSize, ballMany;
@@ -34,12 +39,14 @@ namespace breakOut {
 
         public Brick(Ball ball) {
             this.ball = ball;
+            manager = new Manager();
             map = new Map();
             random = new Random();
 
             hitNum = 0;
             hitDelay = 2;
             startDelay = 5;
+            stageNum = 0;
             itemSpawn = new bool[3];
             itemPos = new float[3, 2];
 
@@ -54,27 +61,28 @@ namespace breakOut {
             ballMany = Image.FromFile(Application.StartupPath + @"\images\ballItem.png");
         }
         public void drawBrick(Graphics g) {
-            for (int i = 0; i < map.brickMap.GetLength(0); i++) {
-                for (int j = 1; j < map.brickMap.GetLength(1); j++) {
-                    if (map.brickMap[i, j] == 1)
+            for (int i = 0; i < map.brickMap.GetLength(1); i++) {
+                for (int j = 1; j < map.brickMap.GetLength(2); j++) {
+                    if (map.brickMap[stageNum, i, j] == 1)
                         g.DrawImage(red, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] == 2)
+                    else if (map.brickMap[stageNum, i, j] == 2)
                         g.DrawImage(orange, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] == 3)
+                    else if (map.brickMap[stageNum, i, j] == 3)
                         g.DrawImage(yellow, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] == 4)
+                    else if (map.brickMap[stageNum, i, j] == 4)
                         g.DrawImage(green, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] == 5)
+                    else if (map.brickMap[stageNum, i, j] == 5)
                         g.DrawImage(blue, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] == 6)
+                    else if (map.brickMap[stageNum, i, j] == 6)
                         g.DrawImage(indigo, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] == 7)
+                    else if (map.brickMap[stageNum, i, j] == 7)
                         g.DrawImage(purple, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[i, j] >= 8)
+                    else if (map.brickMap[stageNum, i, j] >= 8)
                         g.DrawImage(gray, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
                 }
             }
             if (saveI != 0) {
+                //MessageBox.Show("Test");
                 if (startDelay >= hitDelay) {
                     startDelay = 0;
                     hitNum++;
@@ -86,7 +94,7 @@ namespace breakOut {
                             g.DrawImage(gray2, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
                             break;
                         case 3:
-                            g.DrawImage(gray3, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
+                            g.DrawImage(gray3, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30)); // 이동인 도움
                             break;
                     }
                 }
@@ -113,50 +121,50 @@ namespace breakOut {
         }
 
         //public void ballBrickTouch() {
-        //    for (int i = 0; i < map.brickMap.GetLength(0); i++) {
-        //        for (int j = 0; j < map.brickMap.GetLength(1); j++) {
-        //            if (map.brickMap[i, j] != 0) {
+        //    for (int i = 0; i < map.brickMap.GetLength(1); i++) {
+        //        for (int j = 0; j < map.brickMap.GetLength(2); j++) {
+        //            if (map.brickMap[0, i, j] != 0) {
         //                //if ((ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50)
         //                //    && (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20)) { // 왼쪽 위
-        //                //    map.brickMap[i, j] = 0;
+        //                //    map.brickMap[0, i, j] = 0;
         //                //    ball.moveX *= -1;
         //                //    ball.moveY *= -1;
         //                //}
         //                //else if (((ball.posX + 16) >= (30 + (60 * (j - 1))) && (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50) // 오른쪽 위
         //                //    && (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20))
-        //                //    map.brickMap[i, j] = 0;
+        //                //    map.brickMap[0, i, j] = 0;
         //                //else if ((ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50) // 왼쪽 아래
         //                //    && ((ball.posY + 16) >= 100 + (30 * (i + 1)) && (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20))
-        //                //    map.brickMap[i, j] = 0;
+        //                //    map.brickMap[0, i, j] = 0;
         //                //else if (((ball.posX + 16) >= (30 + (60 * (j - 1))) && (ball.posX + 16) <= (30 + (60 * (j - 1))) + 50) // 오른쪽 아래
         //                //    && ((ball.posY + 16) >= 100 + (30 * (i + 1)) && (ball.posY + 16) <= 100 + (30 * (i + 1)) + 20))
-        //                //    map.brickMap[i, j] = 0;
+        //                //    map.brickMap[0, i, j] = 0;
 
         //                if (ball.posY >= 100 + (30 * (i + 1)) + 17 && ball.posY <= 100 + (30 * (i + 1)) + 20) { // 벽돌 아래 부분
         //                    if (ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50
         //                        || ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 50) {
-        //                        map.brickMap[i, j] = 0;
+        //                        map.brickMap[0, i, j] = 0;
         //                        ball.moveY *= -1;
         //                    }
         //                }
         //                else if (ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 3) { // 벽돌 위 부분
         //                    if (ball.posX >= (30 + (60 * (j - 1))) && ball.posX <= (30 + (60 * (j - 1))) + 50
         //                        || ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 50) {
-        //                        map.brickMap[i, j] = 0;
+        //                        map.brickMap[0, i, j] = 0;
         //                        ball.moveY *= -1;
         //                    }
         //                }
         //                else if (ball.posX + 16 >= (30 + (60 * (j - 1))) && ball.posX + 16 <= (30 + (60 * (j - 1))) + 3) { // 벽돌 왼쪽 부분
         //                    if (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20
         //                        || ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 20) {
-        //                        map.brickMap[i, j] = 0;
+        //                        map.brickMap[0, i, j] = 0;
         //                        ball.moveX *= -1;
         //                    }
         //                }
         //                else if (ball.posX >= (30 + (60 * (j - 1))) + 47 && ball.posX <= (30 + (60 * (j - 1))) + 50) { // 벽돌 오른쪽 부분
         //                    if (ball.posY >= 100 + (30 * (i + 1)) && ball.posY <= 100 + (30 * (i + 1)) + 20
         //                        || ball.posY + 16 >= 100 + (30 * (i + 1)) && ball.posY + 16 <= 100 + (30 * (i + 1)) + 20) {
-        //                        map.brickMap[i, j] = 0;
+        //                        map.brickMap[0, i, j] = 0;
         //                        ball.moveX *= -1;
         //                    }
         //                }
@@ -165,9 +173,9 @@ namespace breakOut {
         //    }
         //}
         public void ballBrickCalc() {
-            for (int i = 0; i < map.brickMap.GetLength(0); i++) {
-                for (int j = 0; j < map.brickMap.GetLength(1); j++) {
-                    if (map.brickMap[i, j] != 0) {
+            for (int i = 0; i < map.brickMap.GetLength(1); i++) {
+                for (int j = 0; j < map.brickMap.GetLength(2); j++) {
+                    if (map.brickMap[stageNum, i, j] != 0) {
                         for (int ballNum = 0; ballNum < ball.ballCount; ballNum++) {
                             if ((ball.posX[ballNum] >= (30 + (60 * (j - 1))) && ball.posX[ballNum] <= (30 + (60 * (j - 1))) + 50)
                                  && (ball.posY[ballNum] >= 100 + (30 * (i + 1)) && ball.posY[ballNum] <= 100 + (30 * (i + 1)) + 20)) { // 공의 왼쪽 위
@@ -208,80 +216,28 @@ namespace breakOut {
                                         /*&& (ball.calcPosX[ballNum] >= (30 + (60 * (j - 1))) || (ball.posX[ballNum] + 16) <= (30 + (60 * (j - 1))) + 50)*/) { // 벽돌 위쪽
                                                                                                                                                                //위쪽에 부딪힌 판정
                                         ball.dir = "UD";
-                                        ball.changeBallIndex = ballNum;
-                                        if (map.brickMap[i, j] >= 8) {
-                                            map.brickMap[i, j]--;
-                                            saveI = i;
-                                            saveJ = j;
-                                        }
-                                        if (map.brickMap[i, j] < 8) {
-                                            map.brickMap[i, j] = 0;
-                                            saveI = 0;
-                                            saveJ = 0;
-                                        }
-                                        wmp.controls.play();
-                                        ballBrickCalcStart = false;
-                                        itemDrop(i, j);
+                                        calcSatisfy(i, j, ballNum);
                                         return;
                                     }
                                     else if (ball.calcPosY[ballNum] >= 100 + (30 * (i + 1)) + 20 && ball.calcPosY[ballNum] <= 100 + (30 * (i + 1)) + 20 + 1
                                         /*&& (ball.calcPosX[ballNum] >= (30 + (60 * (j - 1))) || (ball.posX[ballNum] + 16) <= (30 + (60 * (j - 1))) + 50)*/) { // 벽돌 아래쪽
                                                                                                                                                                //아래쪽에 부딪힌 판정
                                         ball.dir = "UD";
-                                        ball.changeBallIndex = ballNum;
-                                        if (map.brickMap[i, j] >= 8) {
-                                            map.brickMap[i, j]--;
-                                            saveI = i;
-                                            saveJ = j;
-                                        }
-                                        if (map.brickMap[i, j] < 8) {
-                                            map.brickMap[i, j] = 0;
-                                            saveI = 0;
-                                            saveJ = 0;
-                                        }
-                                        wmp.controls.play();
-                                        ballBrickCalcStart = false;
-                                        itemDrop(i, j);
+                                        calcSatisfy(i, j, ballNum);
                                         return;
                                     }
                                     else if ((ball.calcPosX[ballNum] + 16) <= (30 + (60 * (j - 1))) && (ball.calcPosX[ballNum] + 16) >= (30 + (60 * (j - 1))) - 1
                                         /*&& (ball.posY[ballNum] >= 100 + (30 * (i + 1)) || (ball.posY[ballNum] + 16) <= 100 + (30 * (i + 1)) + 20)*/) { // 벽돌 왼쪽
                                                                                                                                                          //왼쪽에 부딪힌 판정    
                                         ball.dir = "LR";
-                                        ball.changeBallIndex = ballNum;
-                                        if (map.brickMap[i, j] >= 8) {
-                                            map.brickMap[i, j]--;
-                                            saveI = i;
-                                            saveJ = j;
-                                        }
-                                        if (map.brickMap[i, j] < 8) {
-                                            map.brickMap[i, j] = 0;
-                                            saveI = 0;
-                                            saveJ = 0;
-                                        }
-                                        wmp.controls.play();
-                                        ballBrickCalcStart = false;
-                                        itemDrop(i, j);
+                                        calcSatisfy(i, j, ballNum);
                                         return;
                                     }
                                     else if (ball.calcPosX[ballNum] >= (30 + (60 * (j - 1))) + 50 && ball.calcPosX[ballNum] <= (30 + (60 * (j - 1))) + 50 + 1
                                        /* && (ball.posY[ballNum] >= 100 + (30 * (i + 1)) || (ball.posY[ballNum] + 16) <= 100 + (30 * (i + 1)) + 20)*/) { // 벽돌 오른쪽
                                                                                                                                                          //오른쪽에 부딪힌 판정
                                         ball.dir = "LR";
-                                        ball.changeBallIndex = ballNum;
-                                        if (map.brickMap[i, j] >= 8) {
-                                            map.brickMap[i, j]--;
-                                            saveI = i;
-                                            saveJ = j;
-                                        }
-                                        if (map.brickMap[i, j] < 8) {
-                                            map.brickMap[i, j] = 0;
-                                            saveI = 0;
-                                            saveJ = 0;
-                                        }
-                                        wmp.controls.play();
-                                        ballBrickCalcStart = false;
-                                        itemDrop(i, j);
+                                        calcSatisfy(i, j, ballNum);
                                         return;
                                     }
                                 }
@@ -289,6 +245,46 @@ namespace breakOut {
                         }
                     }
                 }
+            }
+        }
+        private void calcSatisfy(int i, int j, int ballNum) {
+            ball.changeBallIndex = ballNum;
+            if (map.brickMap[stageNum, i, j] >= 8) {
+                map.brickMap[stageNum, i, j]--;
+                saveI = i;
+                saveJ = j;
+                if (map.brickMap[stageNum, i, j] == 7)
+                    score += 80;
+            }
+            if (map.brickMap[stageNum, i, j] < 8) {
+                map.brickMap[stageNum, i, j] = 0;
+                saveI = 0;
+                saveJ = 0;
+                attackBrick++;
+                score += 20;
+            }
+            wmp.controls.play();
+            ballBrickCalcStart = false;
+            itemDrop(i, j);
+            StageClear(map.mapItemCount[stageNum], attackBrick);
+        }
+        private void StageClear(int clearItem, int currentItem) {
+            if (clearItem * 0.9 <= currentItem) {
+                ball.startNow = true;
+                ball.moveX[0] = 0;
+                ball.moveY[0] = 0;
+                ball.calcPosY[0] = 600 - 17;
+                ball.ballCount = 1;
+                itemSpawn[0] = itemSpawn[1] = itemSpawn[2] = false;
+                attackBrick = 0;
+                stageNum++;
+            }
+            if (stageNum >= 3) {
+                //게임 클리어
+                ball.lblGameover.Text = "GameClear";
+                ball.lblGameover.Visible = true;
+                gameSet = true;
+                stageNum = 2;
             }
         }
         private void itemDrop(int i, int j) {
@@ -307,7 +303,7 @@ namespace breakOut {
                 //아이템 드랍
                 itemSpawn[1] = true;
                 itemPos[1, 0] = 30 + (60 * (j - 1)) + 5;
-                itemPos[1, 1] = 100 + (30 * (i + 1)) + 1;
+                itemPos[1, 1] = 100 + (30 * (i + 1));
             }
             else if (tempRand < 9) {
                 if (itemSpawn[2])
@@ -339,16 +335,16 @@ namespace breakOut {
                 return;
 
             if (itemSpawn[0]) {
-                if (itemPos[0, 1] >= 1000)
+                if (itemPos[0, 1] >= 710)
                     itemSpawn[0] = false;
             }
             if (itemSpawn[1]) {
-                if (itemPos[1, 1] >= 1000)
-                    itemSpawn[0] = false;
+                if (itemPos[1, 1] >= 710)
+                    itemSpawn[1] = false;
             }
             if (itemSpawn[2]) {
-                if (itemPos[2, 1] >= 1000)
-                    itemSpawn[0] = false;
+                if (itemPos[2, 1] >= 710)
+                    itemSpawn[2] = false;
             }
         }
     }

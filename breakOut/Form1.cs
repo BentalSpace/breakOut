@@ -20,7 +20,7 @@ namespace breakOut {
             player = new Player();
             ball = new Ball(player, lblGameover);
             brick = new Brick(ball);
-            manager = new Manager(player, ball, brick, LblTest);
+            manager = new Manager(player, ball, brick, lblScore);
         }
         private void Form1_Load(object sender, EventArgs e) {
             gameTimer.Interval = 1000 / 60;
@@ -32,6 +32,8 @@ namespace breakOut {
             player.playerMove(e);
         }
         private void gameTimer_Tick(object sender, EventArgs e) {
+            if (brick.gameSet)
+                return;
             ball.ballCalcMove();
             brick.ballBrickCalc();
             ball.ballRealMove();
@@ -40,6 +42,7 @@ namespace breakOut {
             manager.ballPlayerTouch();
             manager.itemPlayerTouch();
             brick.itemDespawn();
+            manager.scoreUpdate();
 
             Invalidate();
         }

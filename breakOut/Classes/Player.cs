@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace breakOut {
     class Player {
         private int posX = 0;//355;
-        private const int posY = 790;
+        private const int posY = 600;
 
         public string playerSize = "M"; // S, M, B
 
