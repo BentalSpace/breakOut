@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using WMPLib;
@@ -13,6 +14,14 @@ namespace breakOut {
         int stageNum;
         public int score;
         public int attackBrick;
+        int animTick;
+        int goldAnimCount;
+        public int[] mapGoldCount;
+        int goldAnimDelay;
+        int goldAnimDelayCount;
+
+        List<int> goldI;
+        List<int> goldJ;
         /*
          * 0 : 공 갯수 증가
          * 1 : 플레이어 크기 증가
@@ -31,24 +40,31 @@ namespace breakOut {
         public Map map;
         Ball ball;
         Manager manager;
+        Player player;
 
-        Image red, orange, yellow, green, blue, indigo, purple, gray, gray1, gray2, gray3;
+        Image red, orange, yellow, green, blue, indigo, purple, gray, gray1, gray2, gray3, gold, gold1, gold2, gold3, gold4;
         Image bigSize, smallSize, ballMany;
 
         private WindowsMediaPlayer wmp;
 
-        public Brick(Ball ball) {
+        public Brick(Ball ball, Player player) {
             this.ball = ball;
+            this.player = player;
             manager = new Manager();
             map = new Map();
             random = new Random();
+            goldI = new List<int>();
+            goldJ = new List<int>();
 
             hitNum = 0;
-            hitDelay = 2;
-            startDelay = 5;
+            hitDelay = 5;
+            startDelay = 0;
             stageNum = 0;
             itemSpawn = new bool[3];
             itemPos = new float[3, 2];
+            saveI = saveJ = 999;
+            mapGoldCount = new int[map.brickMap.GetLength(0)];
+            goldAnimDelay = 5;
 
             wmp = new WindowsMediaPlayer();
             wmp.URL = Application.StartupPath + @"\sounds\hit.mp3";
@@ -59,6 +75,25 @@ namespace breakOut {
             bigSize = Image.FromFile(Application.StartupPath + @"\images\bigSizeItem.png");
             smallSize = Image.FromFile(Application.StartupPath + @"\images\smallSizeItem.png");
             ballMany = Image.FromFile(Application.StartupPath + @"\images\ballItem.png");
+            specialBrick();
+        }
+        private void specialBrick() {
+            int randI = 0;
+            int randJ = 0;
+            for (int i = 0; i < map.brickMap.GetLength(0); i++) {
+                mapGoldCount[i] = (int)(map.mapItemCount[i] * 0.1);
+                for (int j = 0; j < mapGoldCount[i]; j++) {
+                    while (map.brickMap[i, randI, randJ] == 0
+                        || map.brickMap[i, randI, randJ] == 8) {
+                        randI = random.Next(0, map.brickMap.GetLength(1));
+                        randJ = random.Next(0, map.brickMap.GetLength(2));
+                    }
+                    map.brickMap[i, randI, randJ] = 8;
+                    goldI.Add(randI);
+                    goldJ.Add(randJ);
+                    randI = randJ = 0;
+                }
+            }
         }
         public void drawBrick(Graphics g) {
             for (int i = 0; i < map.brickMap.GetLength(1); i++) {
@@ -77,33 +112,65 @@ namespace breakOut {
                         g.DrawImage(indigo, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
                     else if (map.brickMap[stageNum, i, j] == 7)
                         g.DrawImage(purple, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
-                    else if (map.brickMap[stageNum, i, j] >= 8)
+                    else if (map.brickMap[stageNum, i, j] == 8)
+                        g.DrawImage(gold, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
+                    else if (map.brickMap[stageNum, i, j] >= 9)
                         g.DrawImage(gray, (30 + (60 * (j - 1))), 100 + ((i + 1) * 30));
                 }
             }
-            if (saveI != 0) {
-                //MessageBox.Show("Test");
-                if (startDelay >= hitDelay) {
-                    startDelay = 0;
-                    hitNum++;
-                    switch (hitNum) {
-                        case 1:
-                            g.DrawImage(gray1, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
-                            break;
-                        case 2:
-                            g.DrawImage(gray2, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
-                            break;
-                        case 3:
-                            g.DrawImage(gray3, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30)); // 이동인 도움
-                            break;
-                    }
+            goldBrickAnim(g);
+            grayBrickAnim(g);
+        }
+        private void grayBrickAnim(Graphics g) {
+            if (saveI == 999)
+                return;
+            switch (hitNum) {
+                case 1:
+                    g.DrawImage(gray1, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
+                    break;
+                case 2:
+                    g.DrawImage(gray2, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30));
+                    break;
+                case 3:
+                    g.DrawImage(gray3, (30 + (60 * (saveJ - 1))), 100 + ((saveI + 1) * 30)); // 이동인 도움
+                    saveI = saveJ = 999;
+                    hitNum = 1;
+                    break;
+            }
+            if(startDelay >= hitDelay) {
+                hitNum++;
+                startDelay = 0;
+            }
+            startDelay++;
+        }
+        private void goldBrickAnim(Graphics g) {
+            animTick++;
+            if (animTick >= 120) {
+                switch (goldAnimCount) {
+                    case 0:
+                        for (int i = 0; i < mapGoldCount[stageNum]; i++)
+                            g.DrawImage(gold1, (30 + (60 * (goldJ[i] - 1))), 100 + ((goldI[i] + 1) * 30));
+                        break;
+                    case 1:
+                        for (int i = 0; i < mapGoldCount[stageNum]; i++)
+                            g.DrawImage(gold2, (30 + (60 * (goldJ[i] - 1))), 100 + ((goldI[i] + 1) * 30));
+                        break;
+                    case 2:
+                        for (int i = 0; i < mapGoldCount[stageNum]; i++)
+                            g.DrawImage(gold3, (30 + (60 * (goldJ[i] - 1))), 100 + ((goldI[i] + 1) * 30));
+                        break;
+                    case 3:
+                        for (int i = 0; i < mapGoldCount[stageNum]; i++)
+                            g.DrawImage(gold4, (30 + (60 * (goldJ[i] - 1))), 100 + ((goldI[i] + 1) * 30));
+                        animTick = 0;
+                        goldAnimCount = 0;
+                        break;
                 }
-                startDelay++;
-                if (hitNum >= 3) {
-                    saveI = saveJ = 0;
-                    startDelay = 5;
-                    hitNum = 0;
+                if (goldAnimDelayCount >= goldAnimDelay) {
+                    goldAnimCount++;
+                    goldAnimDelayCount = 0;
                 }
+                goldAnimDelayCount++;
             }
         }
         private void imageFileSet() {
@@ -118,6 +185,12 @@ namespace breakOut {
             gray1 = Image.FromFile(Application.StartupPath + @"\images\gray1.png");
             gray2 = Image.FromFile(Application.StartupPath + @"\images\gray2.png");
             gray3 = Image.FromFile(Application.StartupPath + @"\images\gray3.png");
+            gold = Image.FromFile(Application.StartupPath + @"\images\gold.png");
+            gold1 = Image.FromFile(Application.StartupPath + @"\images\gold1.png");
+            gold2 = Image.FromFile(Application.StartupPath + @"\images\gold2.png");
+            gold3 = Image.FromFile(Application.StartupPath + @"\images\gold3.png");
+            gold4 = Image.FromFile(Application.StartupPath + @"\images\gold4.png");
+
         }
 
         //public void ballBrickTouch() {
@@ -249,23 +322,36 @@ namespace breakOut {
         }
         private void calcSatisfy(int i, int j, int ballNum) {
             ball.changeBallIndex = ballNum;
-            if (map.brickMap[stageNum, i, j] >= 8) {
+            if (map.brickMap[stageNum, i, j] >= 10) {
                 map.brickMap[stageNum, i, j]--;
                 saveI = i;
                 saveJ = j;
-                if (map.brickMap[stageNum, i, j] == 7)
-                    score += 80;
             }
-            if (map.brickMap[stageNum, i, j] < 8) {
+            else if (map.brickMap[stageNum, i, j] == 8) {
                 map.brickMap[stageNum, i, j] = 0;
-                saveI = 0;
-                saveJ = 0;
+                saveI = 999;
+                saveJ = 999;
                 attackBrick++;
-                score += 20;
+                score += 300;
+                itemDrop(i, j);
+                goldI.Remove(i);
+                goldJ.Remove(j);
+                mapGoldCount[stageNum]--;
             }
+            else if (map.brickMap[stageNum, i, j] <= 9) {
+                if (map.brickMap[stageNum, i, j] == 9)
+                    score += 100;
+                else
+                    score += 20;
+                map.brickMap[stageNum, i, j] = 0;
+                saveI = 999;
+                saveJ = 999;
+                attackBrick++;
+                itemDrop(i, j);
+            }
+            
             wmp.controls.play();
             ballBrickCalcStart = false;
-            itemDrop(i, j);
             StageClear(map.mapItemCount[stageNum], attackBrick);
         }
         private void StageClear(int clearItem, int currentItem) {
@@ -275,9 +361,16 @@ namespace breakOut {
                 ball.moveY[0] = 0;
                 ball.calcPosY[0] = 600 - 17;
                 ball.ballCount = 1;
+                ball.speedTick = 0;
                 itemSpawn[0] = itemSpawn[1] = itemSpawn[2] = false;
                 attackBrick = 0;
+                player.playerSize = "M";
+                for (int i = 0; i < mapGoldCount[stageNum]; i++) {
+                    goldI.RemoveAt(0);
+                    goldJ.RemoveAt(0);
+                }
                 stageNum++;
+
             }
             if (stageNum >= 3) {
                 //게임 클리어
@@ -288,7 +381,7 @@ namespace breakOut {
             }
         }
         private void itemDrop(int i, int j) {
-            int tempRand = random.Next(99);
+            int tempRand = 1;//random.Next(99);
             if (tempRand < 3) {
                 if (itemSpawn[0])
                     return;

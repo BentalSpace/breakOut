@@ -71,6 +71,7 @@ namespace breakOut {
                                 }
                             }
                         }
+                        ball.timeBallSpeed(ballNum);
                     }
                     else if (player.playerSize.Equals("B")) {
                         if (ball.posX[ballNum] >= player.PosX && ball.posX[ballNum] + 16 <= player.PosX + 130) {
@@ -98,6 +99,7 @@ namespace breakOut {
                                 }
                             }
                         }
+                        ball.timeBallSpeed(ballNum);
                     }
                     else if (player.playerSize.Equals("S")) {
                         if (ball.posX[ballNum] >= player.PosX && ball.posX[ballNum] + 16 <= player.PosX + 60) {
@@ -124,6 +126,7 @@ namespace breakOut {
                                 }
                             }
                         }
+                        ball.timeBallSpeed(ballNum);
                     }
                 }
         }
@@ -137,14 +140,9 @@ namespace breakOut {
 
                 ball.moveX[1] = ball.moveX[0] * -1;
                 ball.moveY[1] = ball.moveY[0];
-                if (ball.moveX[0] == 4 || ball.moveX[0] == -4) {
-                    ball.moveX[2] = 5;
-                    ball.moveY[2] = -2;
-                }
-                else if (ball.moveX[0] == 5 || ball.moveX[0] == -5) {
-                    ball.moveX[2] = -4;
-                    ball.moveY[2] = -2;
-                }
+
+                ball.moveX[2] = ball.moveX[0] + 1;
+                ball.moveY[2] = ball.moveY[0] - 1;
             }
             else if (ball.ballCount == 2) {
                 ball.posX[2] = ball.posX[0];

@@ -48,7 +48,6 @@ namespace breakOut {
         }
         public void drawPlayer(Graphics g) {
             g.DrawImage(player, posX, posY);
-
         }
     }
 }

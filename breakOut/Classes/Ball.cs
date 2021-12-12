@@ -5,6 +5,7 @@ namespace breakOut {
     class Ball {
         public int ballCount = 1;
         public int changeBallIndex;
+        public int speedTick;
         public float[] posX;// = 405;
         public float[] posY;// = 790 - 17;
         public float[] moveX; //-1.5f;                    //   25 34 43 52 
@@ -46,6 +47,7 @@ namespace breakOut {
                 for (int ballNum = 0; ballNum < ballCount; ballNum++)
                     //while (ballNum < ballCount)
                     g.DrawImage(ball, posX[ballNum], posY[ballNum]);
+                speedTick = speedTick >= 901 ? 900 : speedTick + 1;
             }
         }
         public void ballDeath() {
@@ -55,9 +57,6 @@ namespace breakOut {
                     //3번(마지막 번호)이 죽으면 상관 없는데 2번,1번이 죽으면 ballcount가 꼬이니까 한칸씩 땡겨줘야 한다.
                     if (ballNum < ballCount - 1) {
                         int temp = ballCount - 1 - ballNum;
-                        //0 1 2 -> 1이 죽었어 -> 2를 1로 보내줘야 해 -> ballnum+1 = ballnum -> temp = 2-1 = 1
-                        //0 1 2 -> 0이 죽었어 -> 1 2 를 0 1로 보내주거나, 2를 0으로 보내주거나 -> temp = 2-0 = 2
-                        // 0 1 -> 0이 죽었어 -> 1을 0으로 보내야 해 -> temp = 1 - 0 = 1
                         posX[ballNum] = posX[ballNum + temp];
                         posY[ballNum] = posY[ballNum + temp];
                         moveX[ballNum] = moveX[ballNum + temp];
@@ -72,14 +71,22 @@ namespace breakOut {
                 lblGameover.Visible = true;
             }
         }
+        public void timeBallSpeed(int ballNum) {
+            int timePlusMove = speedTick / 300;
+            moveX[ballNum] = moveX[ballNum] > 0 ? moveX[ballNum] + timePlusMove : moveX[ballNum] - timePlusMove;
+            moveY[ballNum] = moveY[ballNum] > 0 ? moveY[ballNum] + timePlusMove : moveY[ballNum] - timePlusMove;
+        }
         public void ballCalcMove() {
             for (int ballNum = 0; ballNum < ballCount; ballNum++) {
-                if (posX[ballNum] >= 795 && moveX[ballNum] > 0) // 옆쪽 벽
+                if (posX[ballNum] >= 795 && moveX[ballNum] > 0) { // 옆쪽 벽
                     moveX[ballNum] *= -1;
-                if(posX[ballNum] <= 20 && moveX[ballNum] < 0)
+                }
+                if (posX[ballNum] <= 20 && moveX[ballNum] < 0) {
                     moveX[ballNum] *= -1;
-            if (posY[ballNum] <= 70 && moveY[ballNum] < 0) // 위쪽 벽
+                }
+                if (posY[ballNum] <= 70 && moveY[ballNum] < 0) { // 위쪽 벽
                     moveY[ballNum] *= -1;
+                }
 
                 if (dir == "UD") {
                     moveY[changeBallIndex] *= -1;

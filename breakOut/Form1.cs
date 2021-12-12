@@ -19,7 +19,7 @@ namespace breakOut {
             InitializeComponent();
             player = new Player();
             ball = new Ball(player, lblGameover);
-            brick = new Brick(ball);
+            brick = new Brick(ball, player);
             manager = new Manager(player, ball, brick, lblScore);
         }
         private void Form1_Load(object sender, EventArgs e) {
