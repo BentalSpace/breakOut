@@ -382,7 +382,7 @@ namespace breakOut {
         }
         private void itemDrop(int i, int j) {
             int tempRand = 1;//random.Next(99);
-            if (tempRand < 3) {
+            if (tempRand < 10) {
                 if (itemSpawn[0])
                     return;
                 //아이템 드랍
@@ -390,7 +390,7 @@ namespace breakOut {
                 itemPos[0, 0] = 30 + (60 * (j - 1)) + 5;
                 itemPos[0, 1] = 100 + (30 * (i + 1));
             }
-            else if (tempRand < 6) {
+            else if (tempRand < 20) {
                 if (itemSpawn[1])
                     return;
                 //아이템 드랍
@@ -398,7 +398,7 @@ namespace breakOut {
                 itemPos[1, 0] = 30 + (60 * (j - 1)) + 5;
                 itemPos[1, 1] = 100 + (30 * (i + 1));
             }
-            else if (tempRand < 9) {
+            else if (tempRand < 30) {
                 if (itemSpawn[2])
                     return;
                 //아이템 드랍
